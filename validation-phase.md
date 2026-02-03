@@ -4,7 +4,7 @@
 
 After execution completes, Sensei runs comprehensive validation to verify the migration succeeded. This phase produces the evidence needed for regulatory compliance and stakeholder confidence.
 
----
+***
 
 ### Validation Sequence
 
@@ -45,21 +45,21 @@ Execution Complete
     CERTIFICATION
 ```
 
----
+***
 
 ### What Each Validation Checks
 
-| Validation | Checks | Pass Criteria |
-|------------|--------|---------------|
-| **Structural** | Tables exist, columns match, constraints active | 100% match to plan |
-| **Statistical** | Row counts, null rates, value distributions | Within configured tolerance |
-| **Referential** | FK resolution, cascade behavior | 100% FK integrity |
-| **Semantic** | Business rules, domain constraints | 94-98%+ pass rate |
-| **Behavioral** | Historical query replay | Business-equivalent results |
+| Validation      | Checks                                          | Pass Criteria               |
+| --------------- | ----------------------------------------------- | --------------------------- |
+| **Structural**  | Tables exist, columns match, constraints active | 100% match to plan          |
+| **Statistical** | Row counts, null rates, value distributions     | Within configured tolerance |
+| **Referential** | FK resolution, cascade behavior                 | 100% FK integrity           |
+| **Semantic**    | Business rules, domain constraints              | 94-98%+ pass rate           |
+| **Behavioral**  | Historical query replay                         | Business-equivalent results |
 
 → See [KORA Multi-Source Validation](../components/kora/multi-source-validation.md) for details
 
----
+***
 
 ### Validation Configuration
 
@@ -96,7 +96,7 @@ validation:
     behavioral: flag_and_continue
 ```
 
----
+***
 
 ### Validation Results
 
@@ -147,68 +147,78 @@ validation_results:
         classification: acceptable_variance
 ```
 
----
+***
 
 ### Handling Validation Failures
 
 #### Structural Failures
+
 **Always critical** — indicates infrastructure problem.
 
 Actions:
+
 1. Check target schema was created correctly
 2. Verify no manual changes during migration
 3. Re-run schema creation if needed
 4. Re-migrate affected tables
 
 #### Statistical Failures
+
 **Usually minor** — may indicate transformation issues.
 
 Actions:
+
 1. Review flagged columns
 2. Determine if variance is acceptable
 3. Mark as accepted (with reason) or investigate
 4. Re-migrate affected records if needed
 
 #### Referential Failures
+
 **Critical** — data integrity at risk.
 
 Actions:
+
 1. Identify orphan records
 2. Determine cause (missing parent records, FK mapping error)
 3. Fix and re-migrate affected records
 4. Re-run referential validation
 
 #### Semantic Failures
+
 **Variable severity** — depends on rule importance.
 
 Actions:
+
 1. Review flagged records
 2. Classify as true failure vs. false positive
 3. Add exceptions for known acceptable cases
 4. Re-validate with updated rules
 
 #### Behavioral Failures
+
 **Most important** — indicates functional difference.
 
 Actions:
+
 1. Investigate each divergence
 2. Classify as migration defect vs. acceptable variance
 3. Fix migration defects and re-migrate
 4. Document accepted variances
 
----
+***
 
 ### Timeline
 
-| Dataset Size | Structural | Statistical | Referential | Semantic | Behavioral | Total |
-|--------------|-----------|-------------|-------------|----------|------------|-------|
-| Small (<1M) | 20s | 5 min | 2 min | 10 min | 30 min | ~45 min |
-| Medium (1-100M) | 2 min | 30 min | 15 min | 45 min | 2 hr | ~3.5 hr |
-| Large (>100M) | 10 min | 2 hr | 1 hr | 3 hr | 8 hr | ~14 hr |
+| Dataset Size    | Structural | Statistical | Referential | Semantic | Behavioral | Total    |
+| --------------- | ---------- | ----------- | ----------- | -------- | ---------- | -------- |
+| Small (<1M)     | 20s        | 5 min       | 2 min       | 10 min   | 30 min     | \~45 min |
+| Medium (1-100M) | 2 min      | 30 min      | 15 min      | 45 min   | 2 hr       | \~3.5 hr |
+| Large (>100M)   | 10 min     | 2 hr        | 1 hr        | 3 hr     | 8 hr       | \~14 hr  |
 
 Behavioral validation (Time-Travel Testing) is the longest phase but provides the strongest guarantee.
 
----
+***
 
 ### Skipping Validation (Not Recommended)
 
@@ -220,10 +230,9 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/skip-validation \
 ```
 
 **Warning:** Skipping validation:
-- Produces no Behavioral Equivalence Certificate
-- Voids any compliance guarantees
-- Should only be done with documented justification
 
-→ [Behavioral Equivalence Certification](../components/kora/behavioral-equivalence-certification.md)
-→ [Time-Travel Testing](../components/kora/time-travel-testing.md)
-→ [Operations Overview](README.md)
+* Produces no Behavioral Equivalence Certificate
+* Voids any compliance guarantees
+* Should only be done with documented justification
+
+→ [Behavioral Equivalence Certification](../components/kora/behavioral-equivalence-certification.md) → [Time-Travel Testing](../kora-verification-oracle/kora-truth-oracle/time-travel-testing.md) → [Operations Overview](./)
