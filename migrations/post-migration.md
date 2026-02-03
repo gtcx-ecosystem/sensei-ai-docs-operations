@@ -15,13 +15,13 @@ post_migration_checklist:
     - [ ] Verify monitoring shows healthy metrics
     - [ ] Distribute Behavioral Equivalence Certificate
     - [ ] Document any exceptions or known issues
-    
+
   short_term: # Within 1 week
     - [ ] Complete performance baseline comparison
     - [ ] Gather user feedback
     - [ ] Clean up temporary resources
     - [ ] Archive migration artifacts
-    
+
   medium_term: # Within 1 month
     - [ ] Decommission source database
     - [ ] Update documentation and runbooks
@@ -43,12 +43,14 @@ curl https://api.sensei.ai/v1/migrations/{id}/certificate \
 ```
 
 **Recipients:**
+
 - Technical lead (for records)
 - Compliance officer (for audit file)
 - Business sponsor (for project close)
 - IT audit (for compliance evidence)
 
 The certificate includes:
+
 - Validation results (all five perspectives)
 - Coverage metrics
 - Hash chain evidence
@@ -99,6 +101,7 @@ Document this comparison for stakeholders.
 ### Resource Cleanup
 
 #### Sensei Resources
+
 ```bash
 # Archive migration (keeps records, releases resources)
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/archive
@@ -111,6 +114,7 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/cleanup
 ```
 
 #### Infrastructure Resources
+
 - Terminate any temporary compute (extra workers)
 - Delete staging environments used for testing
 - Remove temporary network routes (VPC peering for migration)
@@ -122,14 +126,14 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/cleanup
 
 Archive for compliance and future reference:
 
-| Artifact | Retention | Location |
-|----------|-----------|----------|
-| Behavioral Equivalence Certificate | 7 years | Compliance archive |
-| Migration plan (approved) | 7 years | Project archive |
-| Validation results | 7 years | Compliance archive |
-| Execution logs | 2 years | Log archive |
-| Mapping documentation | Indefinite | Knowledge base |
-| Error resolution records | 2 years | Project archive |
+| Artifact                           | Retention  | Location           |
+| ---------------------------------- | ---------- | ------------------ |
+| Behavioral Equivalence Certificate | 7 years    | Compliance archive |
+| Migration plan (approved)          | 7 years    | Project archive    |
+| Validation results                 | 7 years    | Compliance archive |
+| Execution logs                     | 2 years    | Log archive        |
+| Mapping documentation              | Indefinite | Knowledge base     |
+| Error resolution records           | 2 years    | Project archive    |
 
 ```bash
 # Export all artifacts
@@ -145,11 +149,13 @@ curl https://api.sensei.ai/v1/migrations/{id}/export \
 **Wait for confidence period** — Don't decommission immediately.
 
 Recommended timeline:
+
 - **Week 1-2:** Keep source read-only, available for rollback
 - **Week 2-4:** Reduce source to minimal infrastructure
 - **Week 4+:** Decommission source completely
 
 **Decommissioning checklist:**
+
 ```yaml
 source_decommissioning:
   prerequisites:
@@ -157,7 +163,7 @@ source_decommissioning:
     - [ ] Rollback window expired
     - [ ] Final backup taken (for archival)
     - [ ] Stakeholder approval obtained
-    
+
   steps:
     - [ ] Stop source database
     - [ ] Take final snapshot (archive)
@@ -187,16 +193,19 @@ Update organizational documentation:
 Conduct a retrospective meeting:
 
 **What went well:**
+
 - Autonomous error recovery worked as expected
 - Validation caught the date format issue before production
 - Stakeholder communication via AMANI was effective
 
 **What could improve:**
+
 - Initial resource estimates were too low
 - Network latency to Snowflake wasn't accounted for
 - Some team members weren't trained on AMANI
 
 **Action items:**
+
 - Create template for network planning
 - Add Snowflake-specific tuning to playbook
 - Schedule AMANI training for new team members
@@ -214,10 +223,12 @@ Formal closure activities:
 5. **Celebration** — Recognize the team's work
 
 **Final report template:**
+
 ```markdown
 # Migration Project Final Report
 
 ## Summary
+
 - Source: Oracle 19c (HR_PROD)
 - Target: PostgreSQL 16 (hr_production)
 - Duration: 3 weeks (planning through certification)
@@ -225,20 +236,24 @@ Formal closure activities:
 - Final status: Certified
 
 ## Outcomes
+
 - Migration completed on schedule
 - Zero production incidents during cutover
 - 40% query latency improvement achieved
 - 23% storage reduction achieved
 
 ## Cost
+
 - Estimated: $15,000
 - Actual: $14,230
 - Variance: -5% (under budget)
 
 ## Lessons Learned
+
 [Include retrospective findings]
 
 ## Acknowledgments
+
 [Team members who contributed]
 ```
 

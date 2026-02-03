@@ -8,16 +8,16 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 
 ### Runbook Index
 
-| Scenario | Use When |
-|----------|----------|
-| [Starting a Migration](#starting-a-migration) | Beginning a new migration |
-| [Handling Escalated Errors](#handling-escalated-errors) | Errors need human review |
-| [Pausing/Resuming](#pauseresuming-a-migration) | Manual intervention needed |
-| [Emergency Stop](#emergency-stop) | Critical issue requires immediate halt |
-| [Rollback](#rollback-procedure) | Migration must be undone |
-| [Performance Degradation](#performance-degradation) | Migration running slower than expected |
-| [Source/Target Unavailable](#sourcetarget-unavailable) | Connection issues |
-| [Cutover Execution](#cutover-execution) | Go-live procedure |
+| Scenario                                                | Use When                               |
+| ------------------------------------------------------- | -------------------------------------- |
+| [Starting a Migration](#starting-a-migration)           | Beginning a new migration              |
+| [Handling Escalated Errors](#handling-escalated-errors) | Errors need human review               |
+| [Pausing/Resuming](#pauseresuming-a-migration)          | Manual intervention needed             |
+| [Emergency Stop](#emergency-stop)                       | Critical issue requires immediate halt |
+| [Rollback](#rollback-procedure)                         | Migration must be undone               |
+| [Performance Degradation](#performance-degradation)     | Migration running slower than expected |
+| [Source/Target Unavailable](#sourcetarget-unavailable)  | Connection issues                      |
+| [Cutover Execution](#cutover-execution)                 | Go-live procedure                      |
 
 ---
 
@@ -28,17 +28,19 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Steps:**
 
 1. **Verify prerequisites**
+
    ```bash
    # Test source connectivity
    curl -X POST https://api.sensei.ai/v1/connections/test \
      -d '{"type": "postgresql", "connection_string": "..."}'
-   
+
    # Test target connectivity
    curl -X POST https://api.sensei.ai/v1/connections/test \
      -d '{"type": "snowflake", "account": "..."}'
    ```
 
 2. **Create migration**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/migrations \
      -d '{"name": "...", "source": {...}, "target": {...}}'
@@ -54,6 +56,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
    - Verify webhook endpoints
 
 5. **Start execution**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/start
    ```
@@ -74,11 +77,13 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Steps:**
 
 1. **Acknowledge alert**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/alerts/{alert_id}/acknowledge
    ```
 
 2. **Review error details**
+
    ```bash
    curl https://api.sensei.ai/v1/migrations/{id}/errors/{error_id}
    ```
@@ -96,11 +101,12 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
    | Business rule | Consult business owner; skip or fix |
 
 5. **Apply resolution**
+
    ```bash
    # Skip records
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/errors/{error_id}/resolve \
      -d '{"resolution": "skip", "reason": "..."}'
-   
+
    # Or retry after fix
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/errors/{error_id}/retry
    ```
@@ -120,6 +126,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Pause steps:**
 
 1. **Issue pause command**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/pause
    ```
@@ -141,6 +148,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
    - Maintenance window open (if applicable)
 
 2. **Issue resume command**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/resume
    ```
@@ -160,6 +168,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Steps:**
 
 1. **Stop immediately**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/stop?immediate=true
    ```
@@ -198,22 +207,25 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
    - Document reason for rollback
 
 2. **Stop migration if running**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/stop
    ```
 
 3. **Choose rollback strategy**
+
    ```bash
    # Option 1: Truncate target (fastest)
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/rollback \
      -d '{"strategy": "truncate"}'
-   
+
    # Option 2: Point-in-time recovery
    curl -X POST https://api.sensei.ai/v1/migrations/{id}/rollback \
      -d '{"strategy": "point_in_time", "restore_to": "2026-02-02T07:59:00Z"}'
    ```
 
 4. **Verify rollback**
+
    ```bash
    curl https://api.sensei.ai/v1/migrations/{id}/rollback/status
    ```
@@ -238,6 +250,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Steps:**
 
 1. **Check bottleneck analysis**
+
    ```bash
    curl https://api.sensei.ai/v1/migrations/{id}/performance/bottleneck
    ```
@@ -251,6 +264,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
    | Network | High latency between components | Check network path |
 
 3. **Apply mitigation**
+
    ```bash
    # Example: Reduce parallel readers
    curl -X PATCH https://api.sensei.ai/v1/migrations/{id}/config \
@@ -276,6 +290,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Steps:**
 
 1. **Verify connection issue**
+
    ```bash
    curl -X POST https://api.sensei.ai/v1/connections/{id}/test
    ```
@@ -306,6 +321,7 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Trigger:** Migration complete, ready for cutover
 
 **Pre-cutover (T-1 hour):**
+
 - [ ] Verify migration status is `certified`
 - [ ] Verify incremental sync lag < 1 minute
 - [ ] Notify stakeholders cutover is starting
@@ -314,29 +330,34 @@ Runbooks provide step-by-step procedures for common operational scenarios. Use t
 **Cutover execution:**
 
 T-0:00 — Announce cutover starting
+
 ```bash
 # Optional: Pause source writes if needed
 ```
 
 T-0:05 — Final sync
+
 ```bash
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/sync
 curl https://api.sensei.ai/v1/migrations/{id}/lag  # Wait for 0
 ```
 
 T-0:10 — Update application configuration
+
 ```bash
 # Update connection strings to point to target
 # This step is environment-specific
 ```
 
 T-0:15 — Start applications
+
 ```bash
 # Start applications pointing to target
 # Verify applications starting
 ```
 
 T-0:20 — Smoke tests
+
 ```bash
 # Run critical path tests
 # Verify core functionality
@@ -345,11 +366,13 @@ T-0:20 — Smoke tests
 T-0:30 — Announce cutover complete
 
 **Post-cutover monitoring:**
+
 - Watch error rates for 1 hour
 - Compare latency to baseline
 - Monitor user feedback
 
 **Rollback trigger criteria:**
+
 - Error rate > 5%
 - P95 latency > 2x baseline
 - Critical functionality broken

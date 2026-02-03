@@ -57,7 +57,7 @@ Execution Complete
 | **Semantic**    | Business rules, domain constraints              | 94-98%+ pass rate           |
 | **Behavioral**  | Historical query replay                         | Business-equivalent results |
 
-→ See [KORA Multi-Source Validation](../components/kora/multi-source-validation.md) for details
+→ See [KORA Multi-Source Validation](../../developers/components/kora/multi-source-validation.md) for details
 
 ---
 
@@ -235,4 +235,4 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/skip-validation \
 - Voids any compliance guarantees
 - Should only be done with documented justification
 
-→ [Behavioral Equivalence Certification](../components/kora/behavioral-equivalence-certification.md) → [Time-Travel Testing](../data-intelligence-stack/kora/time-travel-testing.md) → [Operations Overview](./)
+→ [Behavioral Equivalence Certification](../../developers/components/kora/behavioral-equivalence-certification.md) → [Time-Travel Testing](../../product/platform/kora/time-travel-testing.md) → [Operations Overview](./)
