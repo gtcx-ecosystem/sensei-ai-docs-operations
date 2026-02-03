@@ -235,4 +235,4 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/skip-validation \
 * Voids any compliance guarantees
 * Should only be done with documented justification
 
-→ [Behavioral Equivalence Certification](../components/kora/behavioral-equivalence-certification.md) → [Time-Travel Testing](../kora-verification-oracle/kora-truth-oracle/time-travel-testing.md) → [Operations Overview](./)
+→ [Behavioral Equivalence Certification](../components/kora/behavioral-equivalence-certification.md) → [Time-Travel Testing](../data-intelligence-stack/kora/time-travel-testing.md) → [Operations Overview](./)
