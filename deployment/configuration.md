@@ -60,10 +60,10 @@ agents:
   # Cognitive tier settings
   cognitive:
     # Model selection for Scout agents
-    scout_model: gpt-4-turbo
+    scout_model: claude-sonnet-4-20250514
 
     # Model selection for Architect agents
-    architect_model: gpt-4-turbo
+    architect_model: claude-sonnet-4-20250514
 
     # Maximum tokens per request
     max_tokens: 4096
