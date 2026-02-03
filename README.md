@@ -1,17 +1,37 @@
+---
+description: Deploy, operate, and maintain Sensei in production
+---
+
 # Operations
 
-## Deploy and Run Sensei
+## Migration Operations
 
-This section covers everything you need to deploy, operate, and maintain Sensei in production environments.
+| Phase | Guide |
+| --- | --- |
+| [Planning](migrations/planning-phase.md) | Scheduling, resource estimation, dependency analysis |
+| [Execution](migrations/execution-phase.md) | Checkpointing, incremental runs, parallel migrations |
+| [Validation](migrations/validation-phase.md) | Monitoring, alerting, performance tuning |
+| [Cutover](migrations/cutover-strategies.md) | Zero-downtime strategies and rollback procedures |
+| [Post-Migration](migrations/post-migration.md) | Cleanup, verification, and handoff |
+| [Runbooks](migrations/runbooks.md) | Step-by-step guides for common scenarios |
 
-### Migration Operations
+---
 
-End-to-end guidance for running migrations: planning, execution, validation, cutover, and post-migration. Includes runbooks for common operational scenarios.
+## Deployment
 
-### Deployment
+| Model | Description |
+| --- | --- |
+| [SaaS](deployment/saas.md) | Fully managed — nothing to deploy |
+| [Hybrid](deployment/hybrid.md) | Data plane in your VPC, control plane in Sensei Cloud |
+| [Self-Hosted](deployment/self-hosted.md) | Full control in your own infrastructure |
+| [Air-Gapped](deployment/air-gapped.md) | No internet connectivity required |
 
-Infrastructure setup across all deployment models -- SaaS, hybrid, self-hosted, and air-gapped. Covers Kubernetes, Docker, networking, high availability, scaling, security, monitoring, and backup.
+**Infrastructure:** [Kubernetes](deployment/kubernetes.md) · [Docker](deployment/docker.md) · [Networking](deployment/network.md) · [HA](deployment/high-availability.md) · [Scaling](deployment/scaling.md) · [Security](deployment/security.md) · [Monitoring](deployment/monitoring-setup.md) · [Backup](deployment/backup-recovery.md)
 
-### Checklists
+---
 
-Pre-flight checklists for migration readiness, security hardening, and compliance mapping.
+## Checklists
+
+- [Migration Readiness](checklists/migration-checklist.md) — pre-flight checks before starting
+- [Security Hardening](checklists/security-checklist.md) — production security baseline
+- [Compliance Mapping](checklists/compliance-mapping.md) — regulatory requirement coverage
