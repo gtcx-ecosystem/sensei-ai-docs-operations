@@ -8,7 +8,7 @@ The planning phase is where Sensei analyzes your source and target systems, unde
 
 ### What Happens
 
-```
+```text
 Source Connection              Target Connection
       │                              │
       ↓                              ↓
@@ -50,13 +50,13 @@ Source Connection              Target Connection
 
 ### Timeline
 
-| Step | Duration | Resource Usage |
-|------|----------|----------------|
-| Schema extraction | 1-10 minutes | Low (metadata only) |
-| Statistical profiling | 10-60 minutes | Medium (samples data) |
-| Semantic inference | 10-30 minutes | High (LLM inference) |
-| Pattern matching | 1-5 minutes | Low (vector query) |
-| Plan generation | 5-15 minutes | Medium (code generation) |
+| Step                  | Duration      | Resource Usage           |
+| --------------------- | ------------- | ------------------------ |
+| Schema extraction     | 1-10 minutes  | Low (metadata only)      |
+| Statistical profiling | 10-60 minutes | Medium (samples data)    |
+| Semantic inference    | 10-30 minutes | High (LLM inference)     |
+| Pattern matching      | 1-5 minutes   | Low (vector query)       |
+| Plan generation       | 5-15 minutes  | Medium (code generation) |
 
 **Total:** 30 minutes to 4 hours depending on schema complexity.
 
@@ -70,22 +70,22 @@ Configure how aggressively Sensei analyzes the source:
 planning:
   # Statistical profiling depth
   profiling:
-    sample_rate: 0.1        # 10% sample for statistics
+    sample_rate: 0.1 # 10% sample for statistics
     max_sample_rows: 100000 # Cap at 100K rows per table
     compute_histograms: true
-    detect_patterns: true   # Regex pattern detection
-  
+    detect_patterns: true # Regex pattern detection
+
   # Semantic analysis
   semantic:
     infer_business_meaning: true
     detect_pii: true
     use_pattern_library: true
     min_confidence_threshold: 0.7
-  
+
   # Plan generation
   generation:
-    auto_approve_above: 0.95  # Auto-approve high-confidence
-    flag_below: 0.8           # Flag low-confidence for review
+    auto_approve_above: 0.95 # Auto-approve high-confidence
+    flag_below: 0.8 # Flag low-confidence for review
     generate_rollback_plan: true
 ```
 
@@ -105,7 +105,7 @@ source_schema:
   relationships:
     explicit_fks: 189
     inferred_relationships: 47
-  
+
   table_details:
     - name: customers
       columns: 23
@@ -134,10 +134,10 @@ mappings:
       column: customer_reference
       type: VARCHAR(20)
     confidence: 0.94
-    transformation: "CAST(source.cust_ref AS VARCHAR(20))"
-    reasoning: "Name similarity (0.85) + type compatibility (1.0) + pattern match to prior migration mig_xyz (0.97)"
+    transformation: 'CAST(source.cust_ref AS VARCHAR(20))'
+    reasoning: 'Name similarity (0.85) + type compatibility (1.0) + pattern match to prior migration mig_xyz (0.97)'
     flags: []
-    
+
   - source:
       table: orders
       column: dt_created
@@ -148,10 +148,10 @@ mappings:
       type: TIMESTAMP
     confidence: 0.78
     transformation: "TO_TIMESTAMP(source.dt_created, 'YYYY-MM-DD HH24:MI:SS')"
-    reasoning: "Semantic inference (date) + pattern detection (ISO 8601)"
+    reasoning: 'Semantic inference (date) + pattern detection (ISO 8601)'
     flags:
-      - "Low confidence - verify date format"
-      - "12 records have non-conforming format"
+      - 'Low confidence - verify date format'
+      - '12 records have non-conforming format'
 ```
 
 #### 3. Migration DAG
@@ -162,22 +162,22 @@ Execution order respecting dependencies:
 execution_plan:
   phases:
     - phase: 1
-      name: "Reference Data"
+      name: 'Reference Data'
       tables: [regions, statuses, categories]
       parallel: true
       estimated_duration: 5 minutes
-      
+
     - phase: 2
-      name: "Customer Data"
+      name: 'Customer Data'
       tables: [customers, contacts, addresses]
       parallel: true
       dependencies: [phase_1]
       estimated_duration: 2 hours
-      
+
     - phase: 3
-      name: "Transaction Data"
+      name: 'Transaction Data'
       tables: [orders, order_items, payments]
-      parallel: false  # FK dependencies
+      parallel: false # FK dependencies
       dependencies: [phase_2]
       estimated_duration: 18 hours
 ```
@@ -187,24 +187,24 @@ execution_plan:
 ```yaml
 risk_assessment:
   overall_risk: medium
-  
+
   risks:
     - type: data_loss
       severity: low
-      description: "3 VARCHAR columns will be truncated"
-      affected: ["products.description", "notes.content", "logs.message"]
-      mitigation: "Non-critical fields; truncation acceptable"
-      
+      description: '3 VARCHAR columns will be truncated'
+      affected: ['products.description', 'notes.content', 'logs.message']
+      mitigation: 'Non-critical fields; truncation acceptable'
+
     - type: semantic_ambiguity
       severity: medium
-      description: "47 columns have <80% mapping confidence"
+      description: '47 columns have <80% mapping confidence'
       affected: [list of columns]
-      mitigation: "Manual review required"
-      
+      mitigation: 'Manual review required'
+
     - type: performance
       severity: low
-      description: "orders table (45M rows) may cause bottleneck"
-      mitigation: "Increase parallel workers for phase 3"
+      description: 'orders table (45M rows) may cause bottleneck'
+      mitigation: 'Increase parallel workers for phase 3'
 ```
 
 #### 5. Resource Estimates
@@ -215,7 +215,7 @@ estimates:
     optimistic: 22 hours
     expected: 28 hours
     pessimistic: 40 hours
-    
+
   resources:
     peak_workers: 16
     peak_memory_gb: 64

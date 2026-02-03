@@ -8,11 +8,11 @@ Organizations often need to run multiple migrations concurrently — different d
 
 ### Concurrency Limits
 
-| Plan | Concurrent Migrations | Shared Resources |
-|------|----------------------|------------------|
-| Starter | 2 | Agent pool, LLM inference |
-| Professional | 10 | Agent pool, LLM inference |
-| Enterprise | Unlimited | Dedicated pools available |
+| Plan         | Concurrent Migrations | Shared Resources          |
+| ------------ | --------------------- | ------------------------- |
+| Starter      | 2                     | Agent pool, LLM inference |
+| Professional | 10                    | Agent pool, LLM inference |
+| Enterprise   | Unlimited             | Dedicated pools available |
 
 ---
 
@@ -26,11 +26,11 @@ migration_resources:
   migration_1:
     workers: 8
     memory_gb: 16
-    
+
   migration_2:
     workers: 8
     memory_gb: 16
-    
+
   # Shared resources
   shared:
     llm_inference: true
@@ -39,6 +39,7 @@ migration_resources:
 ```
 
 **Resource contention:**
+
 - LLM inference is shared but queued (no interference)
 - Pattern library reads are parallel (no contention)
 - Network may contend if migrations share source/target
@@ -48,6 +49,7 @@ migration_resources:
 ### Isolation Levels
 
 #### Default: Shared Cluster
+
 Migrations share the Sensei cluster but have isolated workers:
 
 ```yaml
@@ -57,6 +59,7 @@ isolation: shared
 ```
 
 #### Dedicated Pools (Enterprise)
+
 Each migration gets dedicated worker pools:
 
 ```yaml
@@ -70,6 +73,7 @@ resources:
 ```
 
 #### Fully Isolated (Enterprise)
+
 Separate Sensei instances:
 
 ```yaml
@@ -84,6 +88,7 @@ instance_id: sensei-team-a
 ### Coordinating Multiple Migrations
 
 #### Independent Migrations
+
 When migrations don't interact:
 
 ```python
@@ -102,6 +107,7 @@ results = [mig.wait() for mig in migrations]
 ```
 
 #### Dependent Migrations
+
 When migrations must run in sequence:
 
 ```python
@@ -128,6 +134,7 @@ dependent_migrations = [
 ```
 
 #### Phased Rollout
+
 Migration per region:
 
 ```python
@@ -141,11 +148,11 @@ for region in regions:
     )
     mig.start()
     result = mig.wait()
-    
+
     if result.status != "certified":
         # Stop rollout on failure
         break
-    
+
     # Proceed to next region
 ```
 
@@ -154,9 +161,10 @@ for region in regions:
 ### Monitoring Multiple Migrations
 
 #### Dashboard View
+
 The dashboard shows all active migrations:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │ Active Migrations                                        3 of 10│
 ├─────────────────────────────────────────────────────────────────┤
@@ -174,11 +182,13 @@ The dashboard shows all active migrations:
 ```
 
 #### API: List Active Migrations
+
 ```bash
 curl "https://api.sensei.ai/v1/migrations?status=running"
 ```
 
 #### Aggregate Metrics
+
 ```bash
 curl https://api.sensei.ai/v1/metrics/aggregate
 ```
@@ -204,22 +214,23 @@ curl https://api.sensei.ai/v1/metrics/aggregate
 
 When migrations compete for resources:
 
-| Resource | Contention Symptom | Mitigation |
-|----------|-------------------|------------|
-| **CPU** | Slow transformations | Limit workers per migration |
-| **Memory** | OOM errors | Reduce batch sizes |
-| **Network** | Slow transfers | Stagger heavy phases |
-| **Source DB** | Query timeouts | Limit concurrent readers |
-| **Target DB** | Write timeouts | Limit concurrent writers |
+| Resource      | Contention Symptom   | Mitigation                  |
+| ------------- | -------------------- | --------------------------- |
+| **CPU**       | Slow transformations | Limit workers per migration |
+| **Memory**    | OOM errors           | Reduce batch sizes          |
+| **Network**   | Slow transfers       | Stagger heavy phases        |
+| **Source DB** | Query timeouts       | Limit concurrent readers    |
+| **Target DB** | Write timeouts       | Limit concurrent writers    |
 
 **Automatic contention management:**
+
 ```yaml
 contention_management:
   enabled: true
-  
+
   # Automatically reduce parallelism when contention detected
   auto_throttle: true
-  
+
   # Priority ordering (higher = more resources)
   priorities:
     mig_critical: 100

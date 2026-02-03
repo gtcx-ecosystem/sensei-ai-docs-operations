@@ -8,7 +8,7 @@ Checkpointing enables migrations to resume from where they stopped — whether d
 
 ### How Checkpointing Works
 
-```
+```text
 Migration Execution
       │
       ├── Batch 1 ─────→ Success ─→ [Checkpoint 1]
@@ -38,8 +38,8 @@ Each checkpoint captures:
 checkpoint:
   id: ckpt_abc123
   migration_id: mig_xyz789
-  timestamp: "2026-02-02T14:23:00Z"
-  
+  timestamp: '2026-02-02T14:23:00Z'
+
   # Position in migration
   position:
     phase: 3
@@ -47,28 +47,28 @@ checkpoint:
     batch_number: 1547
     last_processed_id: 47291000
     records_completed: 15470000
-  
+
   # State of all tables
   table_states:
     - table: customers
       status: completed
       records: 1250000
-      
+
     - table: orders
       status: in_progress
       records_completed: 15470000
       records_total: 45000000
       last_id: 47291000
-      
+
     - table: order_items
       status: pending
-      
+
   # Error state
   error_state:
     error_count: 234
     error_queue: [list of pending errors]
     recovery_patterns_applied: [list]
-    
+
   # Configuration snapshot
   config_snapshot:
     batch_size: 10000
@@ -86,22 +86,22 @@ checkpointing:
   triggers:
     # Checkpoint every N records
     record_interval: 100000
-    
+
     # Checkpoint every N minutes
     time_interval: 15
-    
+
     # Checkpoint at phase boundaries
     phase_boundaries: true
-    
+
     # Checkpoint before risky operations
     before_risky: true
-  
+
   # Retention
   retention:
     keep_last_n: 5
     keep_all_phase_boundaries: true
-    max_age_hours: 168  # 7 days
-  
+    max_age_hours: 168 # 7 days
+
   # Storage
   storage:
     type: s3
@@ -115,11 +115,13 @@ checkpointing:
 ### Checkpoint Operations
 
 #### List Checkpoints
+
 ```bash
 curl https://api.sensei.ai/v1/migrations/{id}/checkpoints
 ```
 
 Response:
+
 ```json
 {
   "checkpoints": [
@@ -144,12 +146,14 @@ Response:
 ```
 
 #### Create Manual Checkpoint
+
 ```bash
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/checkpoints \
   -d '{"reason": "Before risky manual operation"}'
 ```
 
 #### Restore from Checkpoint
+
 ```bash
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/restore \
   -d '{"checkpoint_id": "ckpt_001"}'
@@ -160,7 +164,8 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/restore \
 ### Resume Scenarios
 
 #### Scenario 1: Process Crash
-```
+
+```text
 Migration running ─→ Worker process crashes
                            │
                            ↓
@@ -174,7 +179,8 @@ Migration running ─→ Worker process crashes
 ```
 
 #### Scenario 2: Manual Pause
-```
+
+```sql
 Migration running ─→ User pauses migration
                            │
                            ↓
@@ -192,7 +198,8 @@ Migration running ─→ User pauses migration
 ```
 
 #### Scenario 3: Infrastructure Failure
-```
+
+```text
 Migration running ─→ Database connection lost
                            │
                            ↓
@@ -225,13 +232,14 @@ Worst case: Failure occurs immediately after a batch completes but before checkp
 
 ### Checkpoint Storage
 
-| Plan | Storage Location | Retention | Encryption |
-|------|-----------------|-----------|------------|
-| Starter | Sensei-managed S3 | 7 days | AES-256 |
-| Professional | Sensei-managed S3 | 30 days | AES-256 |
-| Enterprise | Your S3/GCS/Azure | Configurable | Your KMS |
+| Plan         | Storage Location  | Retention    | Encryption |
+| ------------ | ----------------- | ------------ | ---------- |
+| Starter      | Sensei-managed S3 | 7 days       | AES-256    |
+| Professional | Sensei-managed S3 | 30 days      | AES-256    |
+| Enterprise   | Your S3/GCS/Azure | Configurable | Your KMS   |
 
 **Checkpoint sizes:**
+
 - Small migration: 50-200 KB per checkpoint
 - Medium migration: 200 KB - 2 MB per checkpoint
 - Large migration: 2-20 MB per checkpoint
@@ -241,9 +249,10 @@ Worst case: Failure occurs immediately after a batch completes but before checkp
 ### Troubleshooting
 
 #### Checkpoint Restoration Fails
+
 ```yaml
-error: "Checkpoint ckpt_001 refers to source row_id 47291000, but source now starts at 50000000"
-cause: "Source data was modified after checkpoint was created"
+error: 'Checkpoint ckpt_001 refers to source row_id 47291000, but source now starts at 50000000'
+cause: 'Source data was modified after checkpoint was created'
 resolution:
   - If source was truncated: Restart migration from beginning
   - If source had new rows: Continue from checkpoint (new rows will be picked up)
@@ -251,8 +260,9 @@ resolution:
 ```
 
 #### Checkpoint Too Old
+
 ```yaml
-error: "Checkpoint ckpt_001 is 72 hours old; significant source drift possible"
+error: 'Checkpoint ckpt_001 is 72 hours old; significant source drift possible'
 warning: true
 options:
   - Continue from checkpoint (accept potential drift)

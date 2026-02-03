@@ -8,12 +8,12 @@ Cutover is the moment when applications switch from source to target database. T
 
 ### Strategy Comparison
 
-| Strategy | Downtime | Complexity | Rollback | Best For |
-|----------|----------|------------|----------|----------|
-| **Big Bang** | Hours | Low | Difficult | Small datasets, planned outages |
-| **Blue-Green** | Minutes | Medium | Easy | Applications with load balancers |
-| **Canary** | Zero | High | Easy | Large user bases, gradual rollout |
-| **Strangler** | Zero | High | Per-feature | Monolith to microservices |
+| Strategy       | Downtime | Complexity | Rollback    | Best For                          |
+| -------------- | -------- | ---------- | ----------- | --------------------------------- |
+| **Big Bang**   | Hours    | Low        | Difficult   | Small datasets, planned outages   |
+| **Blue-Green** | Minutes  | Medium     | Easy        | Applications with load balancers  |
+| **Canary**     | Zero     | High       | Easy        | Large user bases, gradual rollout |
+| **Strangler**  | Zero     | High       | Per-feature | Monolith to microservices         |
 
 ---
 
@@ -21,7 +21,7 @@ Cutover is the moment when applications switch from source to target database. T
 
 All traffic switches at once during a planned outage.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      BIG BANG CUTOVER                            │
 ├─────────────────────────────────────────────────────────────────┤
@@ -37,6 +37,7 @@ All traffic switches at once during a planned outage.
 ```
 
 **Steps:**
+
 1. Schedule maintenance window
 2. Stop application traffic
 3. Final incremental sync
@@ -46,7 +47,8 @@ All traffic switches at once during a planned outage.
 7. Monitor
 
 **Timeline:**
-```
+
+```text
 T-0:00  Stop application
 T-0:05  Final sync begins
 T-0:15  Final sync complete
@@ -64,7 +66,7 @@ Total downtime: ~35 minutes
 
 Two environments; switch traffic with load balancer.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     BLUE-GREEN CUTOVER                           │
 ├─────────────────────────────────────────────────────────────────┤
@@ -95,6 +97,7 @@ Two environments; switch traffic with load balancer.
 ```
 
 **Steps:**
+
 1. Deploy application to Green pointing to Target
 2. Run incremental sync until Green is current
 3. Validate Green environment (smoke tests)
@@ -111,7 +114,7 @@ Two environments; switch traffic with load balancer.
 
 Gradually shift traffic from source to target.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      CANARY CUTOVER                              │
 ├─────────────────────────────────────────────────────────────────┤
@@ -136,6 +139,7 @@ Gradually shift traffic from source to target.
 ```
 
 **Steps:**
+
 1. Set up traffic splitting (load balancer, feature flags)
 2. Route 5% of traffic to Target
 3. Monitor error rates, latency, user feedback
@@ -151,7 +155,7 @@ Gradually shift traffic from source to target.
 
 Migrate feature-by-feature rather than database-by-database.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     STRANGLER PATTERN                            │
 ├─────────────────────────────────────────────────────────────────┤
@@ -173,6 +177,7 @@ Migrate feature-by-feature rather than database-by-database.
 ```
 
 **Steps:**
+
 1. Identify bounded contexts
 2. Extract one context (e.g., Users)
 3. Migrate User data to new service
@@ -192,14 +197,14 @@ pre_cutover_checklist:
     - [ ] Connection strings/endpoints prepared
     - [ ] Rollback procedure documented and tested
     - [ ] Monitoring and alerts configured
-    
+
   operational:
     - [ ] Maintenance window scheduled and communicated
     - [ ] Stakeholders notified
     - [ ] Support team briefed
     - [ ] Rollback criteria defined
     - [ ] Success criteria defined
-    
+
   business:
     - [ ] User communication sent
     - [ ] Customer support prepared
@@ -214,28 +219,32 @@ pre_cutover_checklist:
 # Cutover Runbook: [Migration Name]
 
 ## Pre-Cutover (T-24 hours)
+
 - [ ] Verify final incremental sync status
 - [ ] Confirm maintenance window with stakeholders
 - [ ] Test rollback procedure
 
 ## Cutover Execution
-T-0:00  Announce cutover starting
-T-0:05  [Action: Stop application traffic]
-T-0:10  [Action: Verify traffic stopped]
-T-0:15  [Action: Final sync]
-T-0:25  [Action: Validation checks]
-T-0:30  [Action: Switch connection strings]
-T-0:35  [Action: Start application]
-T-0:40  [Action: Smoke tests]
-T-0:45  Announce cutover complete
+
+T-0:00 Announce cutover starting
+T-0:05 [Action: Stop application traffic]
+T-0:10 [Action: Verify traffic stopped]
+T-0:15 [Action: Final sync]
+T-0:25 [Action: Validation checks]
+T-0:30 [Action: Switch connection strings]
+T-0:35 [Action: Start application]
+T-0:40 [Action: Smoke tests]
+T-0:45 Announce cutover complete
 
 ## Rollback Triggers
+
 - Error rate > 5%
 - Latency > 2x baseline
 - Critical functionality broken
 - Data integrity issues detected
 
 ## Rollback Procedure
+
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]

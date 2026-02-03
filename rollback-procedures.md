@@ -169,7 +169,7 @@ sensei validations divergence mig_abc123 --export report.json
 
 **Decision tree:**
 
-```
+```text
 Validation Failed
 ├── Data accuracy issue?
 │   ├── Transformation bug → Fix and re-execute affected tables

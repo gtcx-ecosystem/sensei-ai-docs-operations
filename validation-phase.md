@@ -4,11 +4,11 @@
 
 After execution completes, Sensei runs comprehensive validation to verify the migration succeeded. This phase produces the evidence needed for regulatory compliance and stakeholder confidence.
 
-***
+---
 
 ### Validation Sequence
 
-```
+```text
 Execution Complete
         │
         ↓
@@ -45,7 +45,7 @@ Execution Complete
     CERTIFICATION
 ```
 
-***
+---
 
 ### What Each Validation Checks
 
@@ -59,7 +59,7 @@ Execution Complete
 
 → See [KORA Multi-Source Validation](../components/kora/multi-source-validation.md) for details
 
-***
+---
 
 ### Validation Configuration
 
@@ -71,22 +71,22 @@ validation:
     statistical: true
     referential: true
     semantic: true
-    behavioral: true  # Time-Travel Testing
-  
+    behavioral: true # Time-Travel Testing
+
   # Tolerance settings
   tolerances:
-    row_count_variance: 0       # Exact match required
-    null_rate_variance: 0.001   # 0.1% tolerance
-    numeric_epsilon: 0.0001     # Floating point tolerance
+    row_count_variance: 0 # Exact match required
+    null_rate_variance: 0.001 # 0.1% tolerance
+    numeric_epsilon: 0.0001 # Floating point tolerance
     distribution_threshold: 0.95 # K-S test p-value
-  
+
   # Behavioral validation
   behavioral:
     checkpoints_to_replay: 7
     queries_per_checkpoint: 2000
-    fidelity_level: semantic    # exact | semantic | business
-    coverage_target: 0.8        # 80% table coverage
-  
+    fidelity_level: semantic # exact | semantic | business
+    coverage_target: 0.8 # 80% table coverage
+
   # Failure handling
   on_failure:
     structural: fail_immediately
@@ -96,7 +96,7 @@ validation:
     behavioral: flag_and_continue
 ```
 
-***
+---
 
 ### Validation Results
 
@@ -104,13 +104,13 @@ validation:
 validation_results:
   overall_status: passed
   overall_confidence: 0.9892
-  
+
   structural:
     status: passed
     checks: 247
     passed: 247
     failed: 0
-    
+
   statistical:
     status: passed
     columns_checked: 3891
@@ -118,21 +118,21 @@ validation_results:
     flagged: 7
     flagged_details:
       - column: orders.total_amount
-        issue: "Mean variance 0.003% (expected <0.01%)"
+        issue: 'Mean variance 0.003% (expected <0.01%)'
         severity: low
-        
+
   referential:
     status: passed
     relationships_checked: 236
     integrity_violations: 0
-    
+
   semantic:
     status: passed
     rules_checked: 12847
     passed: 12534
     flagged: 313
     pass_rate: 0.9756
-    
+
   behavioral:
     status: passed
     checkpoints_replayed: 7
@@ -143,11 +143,11 @@ validation_results:
     pass_rate: 0.9996
     divergence_details:
       - query_id: q_47291
-        issue: "Floating point accumulation difference (0.0002%)"
+        issue: 'Floating point accumulation difference (0.0002%)'
         classification: acceptable_variance
 ```
 
-***
+---
 
 ### Handling Validation Failures
 
@@ -206,7 +206,7 @@ Actions:
 3. Fix migration defects and re-migrate
 4. Document accepted variances
 
-***
+---
 
 ### Timeline
 
@@ -218,7 +218,7 @@ Actions:
 
 Behavioral validation (Time-Travel Testing) is the longest phase but provides the strongest guarantee.
 
-***
+---
 
 ### Skipping Validation (Not Recommended)
 
@@ -231,8 +231,8 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/skip-validation \
 
 **Warning:** Skipping validation:
 
-* Produces no Behavioral Equivalence Certificate
-* Voids any compliance guarantees
-* Should only be done with documented justification
+- Produces no Behavioral Equivalence Certificate
+- Voids any compliance guarantees
+- Should only be done with documented justification
 
 → [Behavioral Equivalence Certification](../components/kora/behavioral-equivalence-certification.md) → [Time-Travel Testing](../data-intelligence-stack/kora/time-travel-testing.md) → [Operations Overview](./)

@@ -8,7 +8,7 @@ Sensei auto-optimizes most performance parameters, but understanding the levers 
 
 ### Performance Factors
 
-```
+```text
                          OVERALL THROUGHPUT
                                 │
         ┌───────────────────────┼───────────────────────┐
@@ -33,33 +33,34 @@ Sensei automatically detects bottlenecks:
 ```yaml
 bottleneck_analysis:
   current_bottleneck: target_write
-  
+
   stages:
     source_read:
       throughput: 2.1M records/hr
       utilization: 45%
       status: healthy
-      
+
     transformation:
       throughput: 3.5M records/hr
       utilization: 35%
       status: healthy
-      
+
     target_write:
       throughput: 800K records/hr
       utilization: 95%
-      status: bottleneck  # ← Limiting factor
-      
+      status: bottleneck # ← Limiting factor
+
   recommendation:
     action: increase_write_parallelism
     expected_improvement: 40%
     steps:
-      - "Increase write batch size from 5000 to 10000"
-      - "Enable parallel bulk loading"
-      - "Defer index creation until after load"
+      - 'Increase write batch size from 5000 to 10000'
+      - 'Enable parallel bulk loading'
+      - 'Defer index creation until after load'
 ```
 
 View current bottleneck:
+
 ```bash
 curl https://api.sensei.ai/v1/migrations/{id}/performance/bottleneck
 ```
@@ -68,22 +69,23 @@ curl https://api.sensei.ai/v1/migrations/{id}/performance/bottleneck
 
 ### Source Read Tuning
 
-| Parameter | Default | Effect | When to Adjust |
-|-----------|---------|--------|----------------|
-| `read_batch_size` | 10,000 | Rows per query | Increase for fast networks |
-| `parallel_readers` | 4 | Concurrent read threads | Increase if source can handle |
-| `query_timeout` | 3600s | Max query duration | Increase for slow sources |
-| `fetch_size` | 10,000 | JDBC cursor size | Match batch size |
+| Parameter          | Default | Effect                  | When to Adjust                |
+| ------------------ | ------- | ----------------------- | ----------------------------- |
+| `read_batch_size`  | 10,000  | Rows per query          | Increase for fast networks    |
+| `parallel_readers` | 4       | Concurrent read threads | Increase if source can handle |
+| `query_timeout`    | 3600s   | Max query duration      | Increase for slow sources     |
+| `fetch_size`       | 10,000  | JDBC cursor size        | Match batch size              |
 
 ```yaml
 source:
   performance:
-    read_batch_size: 50000      # Large batches
-    parallel_readers: 8          # More parallelism
-    prefetch_next_batch: true   # Pipeline reads
+    read_batch_size: 50000 # Large batches
+    parallel_readers: 8 # More parallelism
+    prefetch_next_batch: true # Pipeline reads
 ```
 
 **Source-specific tips:**
+
 - **Oracle:** Use `/*+ PARALLEL(8) */` hints
 - **PostgreSQL:** Use `cursor_tuple_fraction = 0.1`
 - **MySQL:** Use `SET SESSION read_buffer_size = 16M`
@@ -92,22 +94,23 @@ source:
 
 ### Transformation Tuning
 
-| Parameter | Default | Effect | When to Adjust |
-|-----------|---------|--------|----------------|
-| `transform_workers` | 8 | Parallel transformation threads | CPU-bound workloads |
-| `transform_batch_size` | 10,000 | Records per transform batch | Memory-constrained |
-| `llm_cache_size` | 1000 | Cached LLM inference results | Repetitive patterns |
+| Parameter              | Default | Effect                          | When to Adjust      |
+| ---------------------- | ------- | ------------------------------- | ------------------- |
+| `transform_workers`    | 8       | Parallel transformation threads | CPU-bound workloads |
+| `transform_batch_size` | 10,000  | Records per transform batch     | Memory-constrained  |
+| `llm_cache_size`       | 1000    | Cached LLM inference results    | Repetitive patterns |
 
 ```yaml
 transformation:
   performance:
-    workers: 16                 # More parallelism
-    vectorize: true             # Use SIMD operations
-    cache_transforms: true      # Cache compiled transforms
-    jit_compile: true           # JIT compile hot paths
+    workers: 16 # More parallelism
+    vectorize: true # Use SIMD operations
+    cache_transforms: true # Cache compiled transforms
+    jit_compile: true # JIT compile hot paths
 ```
 
 **Tips:**
+
 - Complex transformations benefit from more workers
 - Simple type conversions are often memory-bound
 - LLM caching dramatically helps repetitive patterns
@@ -116,12 +119,12 @@ transformation:
 
 ### Target Write Tuning
 
-| Parameter | Default | Effect | When to Adjust |
-|-----------|---------|--------|----------------|
-| `write_batch_size` | 5,000 | Rows per commit | Balance commit overhead vs. memory |
-| `parallel_writers` | 4 | Concurrent write connections | Target can handle parallel |
-| `defer_indexes` | true | Create indexes after load | Large tables |
-| `bulk_load` | true | Use COPY/bulk insert | When available |
+| Parameter          | Default | Effect                       | When to Adjust                     |
+| ------------------ | ------- | ---------------------------- | ---------------------------------- |
+| `write_batch_size` | 5,000   | Rows per commit              | Balance commit overhead vs. memory |
+| `parallel_writers` | 4       | Concurrent write connections | Target can handle parallel         |
+| `defer_indexes`    | true    | Create indexes after load    | Large tables                       |
+| `bulk_load`        | true    | Use COPY/bulk insert         | When available                     |
 
 ```yaml
 target:
@@ -135,6 +138,7 @@ target:
 ```
 
 **Target-specific tips:**
+
 - **PostgreSQL:** Use `COPY`, set `synchronous_commit = off`
 - **Snowflake:** Stage to S3, use `COPY INTO`
 - **BigQuery:** Use load jobs, not streaming inserts
@@ -147,6 +151,7 @@ target:
 Quick presets for common scenarios:
 
 #### `speed` — Maximize throughput
+
 ```yaml
 strategy: speed
 # Results in:
@@ -158,6 +163,7 @@ strategy: speed
 ```
 
 #### `safe` — Minimize risk
+
 ```yaml
 strategy: safe
 # Results in:
@@ -169,6 +175,7 @@ strategy: safe
 ```
 
 #### `balanced` — Default
+
 ```yaml
 strategy: balanced
 # Results in:
@@ -188,7 +195,7 @@ Sensei continuously adjusts during execution:
 ```yaml
 adaptive_optimization:
   enabled: true
-  
+
   behaviors:
     # Adjust batch sizes based on observed performance
     batch_size_tuning:
@@ -196,15 +203,15 @@ adaptive_optimization:
       min_batch: 1000
       max_batch: 100000
       adjustment_interval: 5m
-    
+
     # Spawn/reduce workers based on bottleneck
     worker_scaling:
       enabled: true
       min_workers: 2
       max_workers: 32
-      scale_up_threshold: 0.8   # Utilization
+      scale_up_threshold: 0.8 # Utilization
       scale_down_threshold: 0.3
-    
+
     # Adjust compression based on network
     compression_tuning:
       enabled: true
@@ -218,14 +225,15 @@ adaptive_optimization:
 
 Typical throughput by scenario:
 
-| Scenario | Source | Target | Throughput |
-|----------|--------|--------|------------|
-| Simple type conversion | PostgreSQL | PostgreSQL | 2-3M rec/hr |
-| Complex transformation | Oracle | Snowflake | 800K-1.2M rec/hr |
-| Large blob data | SQL Server | S3+PostgreSQL | 200-400K rec/hr |
-| High cardinality | MySQL | BigQuery | 1-2M rec/hr |
+| Scenario               | Source     | Target        | Throughput       |
+| ---------------------- | ---------- | ------------- | ---------------- |
+| Simple type conversion | PostgreSQL | PostgreSQL    | 2-3M rec/hr      |
+| Complex transformation | Oracle     | Snowflake     | 800K-1.2M rec/hr |
+| Large blob data        | SQL Server | S3+PostgreSQL | 200-400K rec/hr  |
+| High cardinality       | MySQL      | BigQuery      | 1-2M rec/hr      |
 
 **Factors that slow throughput:**
+
 - Complex transformations (regex, LLM inference)
 - Large blob/text columns
 - Many foreign key constraints

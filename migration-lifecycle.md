@@ -8,7 +8,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 ### The Five Phases
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  Phase 1      Phase 2        Phase 3        Phase 4       Phase 5      │
 │  PLANNING     APPROVAL       EXECUTION      VALIDATION    CERTIFICATION│
@@ -31,6 +31,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **Duration:** 1-4 hours (automated)
 
 **Activities:**
+
 1. **Schema Analysis** — Scout Agents connect to source and target, extract metadata
 2. **Statistical Profiling** — MABA computes distributional fingerprints
 3. **Semantic Analysis** — LLM inference determines column meanings
@@ -40,6 +41,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **States:** `created` → `analyzing` → `planning` → `awaiting_approval`
 
 **Outputs:**
+
 - Complete source schema documentation
 - Suggested mappings with confidence scores
 - Migration DAG (execution order)
@@ -55,6 +57,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **Duration:** Variable (depends on review process)
 
 **Activities:**
+
 1. **Review mappings** — Stakeholders examine suggested mappings
 2. **Adjust as needed** — Modify mappings, transformations, or strategy
 3. **Configure options** — Set error thresholds, notification preferences
@@ -63,11 +66,13 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **States:** `awaiting_approval` → `approved`
 
 **Outputs:**
+
 - Approved migration plan
 - Configuration settings locked
 - Audit trail of approvals
 
 **User actions required:**
+
 - Review and approve mappings
 - Configure execution options
 - Grant final approval
@@ -79,6 +84,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **Duration:** Hours to days (depends on data volume)
 
 **Activities:**
+
 1. **Data transfer** — Worker Agents read, transform, and write data
 2. **Inline validation** — Validator Agents check each batch
 3. **Error recovery** — Automatic recovery for known error patterns
@@ -88,12 +94,14 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **States:** `approved` → `running` → (`paused`) → `completed`
 
 **Outputs:**
+
 - Data migrated to target
 - Execution logs
 - Error log with recovery outcomes
 - Performance metrics
 
 **User actions required:**
+
 - Monitor progress (optional — AMANI alerts on issues)
 - Resolve escalated errors
 - Approve continuation after major milestones (if configured)
@@ -105,6 +113,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **Duration:** 2-8 hours (automated)
 
 **Activities:**
+
 1. **Structural validation** — Schema comparison
 2. **Statistical validation** — Distribution comparison
 3. **Referential validation** — FK integrity verification
@@ -114,11 +123,13 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **States:** `completed` → `validating` → `certified` (or `failed`)
 
 **Outputs:**
+
 - Validation results (five perspectives)
 - Divergence reports (if any)
 - Behavioral Equivalence Certificate (if passed)
 
 **User actions required:**
+
 - Review validation results
 - Investigate flagged divergences
 - Accept or reject certification
@@ -130,6 +141,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **Duration:** ~30 minutes (mostly automated)
 
 **Activities:**
+
 1. **Evidence assembly** — Compile all validation evidence
 2. **Certificate generation** — Create cryptographically signed certificate
 3. **Handoff** — Deliver certificate and documentation to stakeholders
@@ -138,11 +150,13 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 **States:** `certified` → (terminal)
 
 **Outputs:**
+
 - Behavioral Equivalence Certificate
 - Migration summary report
 - Archived logs and evidence
 
 **User actions required:**
+
 - Acknowledge completion
 - Distribute certificate to stakeholders
 - Initiate cutover (if not already done)
@@ -151,7 +165,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 ### State Diagram
 
-```
+```text
                     ┌──────────────┐
                     │   created    │
                     └──────┬───────┘
@@ -211,13 +225,13 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 ### Duration Estimates
 
-| Phase | Small (<1M rows) | Medium (1-100M) | Large (>100M) |
-|-------|-----------------|-----------------|---------------|
-| Planning | 30 min | 1-2 hours | 2-4 hours |
-| Approval | 1-4 hours | 4-24 hours | 24-72 hours |
-| Execution | 1-4 hours | 4-24 hours | 24-168 hours |
-| Validation | 1-2 hours | 2-6 hours | 6-24 hours |
-| Certification | 15 min | 30 min | 1 hour |
+| Phase         | Small (<1M rows) | Medium (1-100M) | Large (>100M) |
+| ------------- | ---------------- | --------------- | ------------- |
+| Planning      | 30 min           | 1-2 hours       | 2-4 hours     |
+| Approval      | 1-4 hours        | 4-24 hours      | 24-72 hours   |
+| Execution     | 1-4 hours        | 4-24 hours      | 24-168 hours  |
+| Validation    | 1-2 hours        | 2-6 hours       | 6-24 hours    |
+| Certification | 15 min           | 30 min          | 1 hour        |
 
 Total elapsed time varies significantly based on approval process duration and migration complexity.
 

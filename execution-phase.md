@@ -8,7 +8,7 @@ The execution phase is where data actually moves from source to target. Worker A
 
 ### Execution Flow
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────┐
 │                       EXECUTION PHASE                               │
 ├────────────────────────────────────────────────────────────────────┤
@@ -38,12 +38,14 @@ The execution phase is where data actually moves from source to target. Worker A
 ### Starting Execution
 
 **Via API:**
+
 ```bash
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/start \
   -H "Authorization: Bearer sk_live_abc123"
 ```
 
 **Via SDK:**
+
 ```python
 migration = client.migrations.get("mig_abc123")
 migration.start()
@@ -58,17 +60,17 @@ Click "Start Migration" on the approved migration plan.
 
 #### Real-Time Metrics
 
-| Metric | Description | Typical Range |
-|--------|-------------|---------------|
-| `records_processed` | Total rows migrated | 0 → total |
-| `records_per_hour` | Current throughput | 500K - 2M |
-| `errors_total` | All errors encountered | Varies |
-| `errors_recovered` | Auto-recovered errors | 90-99% of errors |
-| `errors_escalated` | Errors needing human review | 0-10% of errors |
-| `current_phase` | Active DAG phase | 1 → N |
-| `current_table` | Table(s) being processed | Name(s) |
-| `progress_percent` | Overall completion | 0-100% |
-| `eta_completion` | Estimated finish time | DateTime |
+| Metric              | Description                 | Typical Range    |
+| ------------------- | --------------------------- | ---------------- |
+| `records_processed` | Total rows migrated         | 0 → total        |
+| `records_per_hour`  | Current throughput          | 500K - 2M        |
+| `errors_total`      | All errors encountered      | Varies           |
+| `errors_recovered`  | Auto-recovered errors       | 90-99% of errors |
+| `errors_escalated`  | Errors needing human review | 0-10% of errors  |
+| `current_phase`     | Active DAG phase            | 1 → N            |
+| `current_table`     | Table(s) being processed    | Name(s)          |
+| `progress_percent`  | Overall completion          | 0-100%           |
+| `eta_completion`    | Estimated finish time       | DateTime         |
 
 #### Progress API
 
@@ -77,6 +79,7 @@ curl https://api.sensei.ai/v1/migrations/{id}/status
 ```
 
 Response:
+
 ```json
 {
   "status": "running",
@@ -113,29 +116,29 @@ Response:
 execution:
   # Parallelism
   parallel:
-    max_workers: 16           # Worker Agent instances
-    tables_parallel: true     # Process independent tables together
-    max_tables_concurrent: 4  # Limit concurrent table processing
-  
+    max_workers: 16 # Worker Agent instances
+    tables_parallel: true # Process independent tables together
+    max_tables_concurrent: 4 # Limit concurrent table processing
+
   # Batching
   batching:
     read_batch_size: 10000
     write_batch_size: 5000
     transform_batch_size: 10000
-  
+
   # Checkpointing
   checkpointing:
-    interval_records: 100000  # Checkpoint every 100K records
-    interval_minutes: 15      # Or every 15 minutes
-    keep_last_n: 5            # Retain last 5 checkpoints
-  
+    interval_records: 100000 # Checkpoint every 100K records
+    interval_minutes: 15 # Or every 15 minutes
+    keep_last_n: 5 # Retain last 5 checkpoints
+
   # Error handling
   errors:
     auto_recover: true
     max_consecutive_errors: 100
-    escalation_threshold: 0.01  # Escalate if >1% error rate
+    escalation_threshold: 0.01 # Escalate if >1% error rate
     pause_on_escalation: false
-  
+
   # Performance
   performance:
     adaptive_batch_sizing: true
@@ -148,22 +151,26 @@ execution:
 ### Pause and Resume
 
 **Pause:**
+
 ```bash
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/pause
 ```
 
 Pausing:
+
 - Completes the current batch
 - Writes a checkpoint
 - Stops reading new batches
 - Releases worker resources
 
 **Resume:**
+
 ```bash
 curl -X POST https://api.sensei.ai/v1/migrations/{id}/resume
 ```
 
 Resuming:
+
 - Loads the last checkpoint
 - Reacquires worker resources
 - Continues from where it stopped
@@ -173,7 +180,8 @@ Resuming:
 ### Common Scenarios
 
 #### Scenario 1: Smooth Execution
-```
+
+```text
 Phase 1 (Reference): ████████████ 100% (5 min)
 Phase 2 (Customers): ████████████ 100% (1.5 hr)
 Phase 3 (Orders):    ████████████ 100% (16 hr)
@@ -184,7 +192,8 @@ Total: 22 hours, 847 errors auto-recovered, 0 escalated
 ```
 
 #### Scenario 2: Error Spike (Auto-Handled)
-```
+
+```text
 Phase 3 (Orders):    ██████░░░░░░ 52%
   └─ Error spike detected: 150 encoding errors in batch
   └─ Auto-recovery: Applied UTF-8 normalization
@@ -194,7 +203,8 @@ Phase 3 (Orders):    ████████████ 100%
 ```
 
 #### Scenario 3: Escalation Required
-```
+
+```text
 Phase 3 (Orders):    ████████░░░░ 67%
   └─ Error escalated: 234 records fail FK constraint
   └─ Cause: Customer records missing from phase 2
@@ -208,12 +218,12 @@ Phase 3 (Orders):    ████████░░░░ 67%
 
 Sensei automatically optimizes execution, but you can tune:
 
-| Lever | Effect | When to Adjust |
-|-------|--------|----------------|
-| `max_workers` | More parallelism | Large datasets, fast network |
-| `read_batch_size` | Fewer DB round-trips | Low-latency source |
-| `write_batch_size` | Fewer commits | High-throughput target |
-| `checkpoint_interval` | Less I/O overhead | Stable environment |
+| Lever                 | Effect               | When to Adjust               |
+| --------------------- | -------------------- | ---------------------------- |
+| `max_workers`         | More parallelism     | Large datasets, fast network |
+| `read_batch_size`     | Fewer DB round-trips | Low-latency source           |
+| `write_batch_size`    | Fewer commits        | High-throughput target       |
+| `checkpoint_interval` | Less I/O overhead    | Stable environment           |
 
 → [Performance Tuning](performance-tuning.md)
 → [Error Handling](error-handling.md)

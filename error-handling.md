@@ -8,21 +8,21 @@ Sensei handles errors autonomously whenever possible. When human intervention is
 
 ### Error Classification
 
-| Category | Examples | Auto-Recovery | Typical Rate |
-|----------|----------|---------------|--------------|
-| **Encoding** | UTF-8 mismatch, character set issues | 95%+ | 0.01-0.1% |
-| **Type Mismatch** | String→Integer, Date format | 90%+ | 0.1-1% |
-| **Constraint** | FK violation, NOT NULL, unique | 70%+ | 0.1-0.5% |
-| **Truncation** | String too long for target | 85%+ | 0.01-0.1% |
-| **Network** | Connection timeout, packet loss | 99%+ | Varies |
-| **Resource** | Memory, disk, CPU exhaustion | 90%+ | Rare |
-| **Logic** | Business rule violation | 20%+ | Varies |
+| Category          | Examples                             | Auto-Recovery | Typical Rate |
+| ----------------- | ------------------------------------ | ------------- | ------------ |
+| **Encoding**      | UTF-8 mismatch, character set issues | 95%+          | 0.01-0.1%    |
+| **Type Mismatch** | String→Integer, Date format          | 90%+          | 0.1-1%       |
+| **Constraint**    | FK violation, NOT NULL, unique       | 70%+          | 0.1-0.5%     |
+| **Truncation**    | String too long for target           | 85%+          | 0.01-0.1%    |
+| **Network**       | Connection timeout, packet loss      | 99%+          | Varies       |
+| **Resource**      | Memory, disk, CPU exhaustion         | 90%+          | Rare         |
+| **Logic**         | Business rule violation              | 20%+          | Varies       |
 
 ---
 
 ### Auto-Recovery Flow
 
-```
+```text
 Error Detected
       │
       ↓
@@ -63,6 +63,7 @@ Error Detected
 ### Common Error Types and Fixes
 
 #### Encoding Errors
+
 ```yaml
 error:
   type: encoding_mismatch
@@ -77,31 +78,33 @@ auto_fix:
 ```
 
 #### Type Conversion
+
 ```yaml
 error:
   type: type_mismatch
   source: VARCHAR "2024-01-15"
   target: DATE
-  
+
 auto_fix:
   strategy: parse_date
   action: "TO_DATE(value, 'YYYY-MM-DD')"
   success_rate: 94%
-  fallback: "NULL with warning"
+  fallback: 'NULL with warning'
 ```
 
 #### FK Violations
+
 ```yaml
 error:
   type: constraint_violation
   constraint: orders_customer_fk
-  message: "No matching customer_id: 99847"
-  
+  message: 'No matching customer_id: 99847'
+
 auto_fix:
   strategy: defer_record
-  action: "Queue record, retry after customers table complete"
+  action: 'Queue record, retry after customers table complete'
   success_rate: 85%
-  fallback: "Escalate if still failing"
+  fallback: 'Escalate if still failing'
 ```
 
 ---
@@ -114,32 +117,32 @@ When auto-recovery fails, errors are escalated:
 escalated_error:
   id: err_abc123
   migration_id: mig_xyz789
-  timestamp: "2026-02-02T14:23:00Z"
-  
+  timestamp: '2026-02-02T14:23:00Z'
+
   error:
     type: constraint_violation
-    message: "Foreign key violation: customer_id 99847 not found"
+    message: 'Foreign key violation: customer_id 99847 not found'
     table: orders
     record_id: 47291
-    
+
   context:
     affected_records: 234
     attempted_fixes: 3
-    last_fix_attempt: "Defer and retry - still failing"
-    
+    last_fix_attempt: 'Defer and retry - still failing'
+
   analysis:
-    likely_cause: "Customer records deleted from source after migration started"
+    likely_cause: 'Customer records deleted from source after migration started'
     confidence: 0.87
-    
+
   recommended_actions:
-    - "Check if customer 99847 was deleted from source"
-    - "Manually add customer record to target, then retry"
-    - "Skip records if business confirms customers are obsolete"
-    
+    - 'Check if customer 99847 was deleted from source'
+    - 'Manually add customer record to target, then retry'
+    - 'Skip records if business confirms customers are obsolete'
+
   impact:
     blocked_records: 234
-    downstream_tables: ["order_items", "payments"]
-    business_impact: "Low - appears to be historical data"
+    downstream_tables: ['order_items', 'payments']
+    business_impact: 'Low - appears to be historical data'
 ```
 
 ---
@@ -171,13 +174,13 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/errors/{error_id}/retry \
 
 ### Resolution Options
 
-| Resolution | When to Use | Effect |
-|------------|-------------|--------|
-| **retry** | After fixing underlying cause | Re-attempt migration of affected records |
-| **skip** | Records are not needed | Skip records, log for audit |
-| **default** | Apply default value | Replace problematic value with default |
-| **transform** | Apply custom fix | Apply specified transformation |
-| **escalate** | Need higher authority | Move to higher-level review queue |
+| Resolution    | When to Use                   | Effect                                   |
+| ------------- | ----------------------------- | ---------------------------------------- |
+| **retry**     | After fixing underlying cause | Re-attempt migration of affected records |
+| **skip**      | Records are not needed        | Skip records, log for audit              |
+| **default**   | Apply default value           | Replace problematic value with default   |
+| **transform** | Apply custom fix              | Apply specified transformation           |
+| **escalate**  | Need higher authority         | Move to higher-level review queue        |
 
 ---
 
@@ -189,17 +192,17 @@ Configure when errors trigger alerts or pauses:
 error_handling:
   thresholds:
     # Alert when error rate exceeds
-    alert_threshold: 0.01      # 1% error rate
-    
+    alert_threshold: 0.01 # 1% error rate
+
     # Pause migration when error rate exceeds
-    pause_threshold: 0.05      # 5% error rate
-    
+    pause_threshold: 0.05 # 5% error rate
+
     # Fail migration when errors exceed
-    fail_threshold: 0.10       # 10% error rate
-    
+    fail_threshold: 0.10 # 10% error rate
+
     # Maximum consecutive errors before pause
     max_consecutive: 100
-    
+
     # Maximum escalated errors before pause
     max_escalated: 50
 ```
@@ -213,18 +216,18 @@ Successfully recovered errors improve future migrations:
 ```yaml
 # When an error is successfully recovered
 learning_event:
-  error_signature: "encoding:latin1_to_utf8:0xe9"
+  error_signature: 'encoding:latin1_to_utf8:0xe9'
   solution: "encode('latin-1').decode('utf-8', 'replace')"
   success: true
-  
+
   # Stored in pattern library
   pattern:
     id: pat_enc_47291
     type: error_recovery
-    applies_to: ["encoding_mismatch", "latin-1", "utf-8"]
+    applies_to: ['encoding_mismatch', 'latin-1', 'utf-8']
     solution_code: "source.encode('latin-1').decode('utf-8', 'replace')"
     success_rate: 0.97
-    
+
   # Future migrations benefit
   next_migration:
     same_error_occurs: true

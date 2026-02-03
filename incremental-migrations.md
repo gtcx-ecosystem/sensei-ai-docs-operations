@@ -8,19 +8,19 @@ Incremental migrations keep source and target synchronized over time — essenti
 
 ### When to Use Incremental
 
-| Scenario | Migration Type |
-|----------|---------------|
-| Source is static during migration | Full migration |
-| Source changes during migration | Incremental required |
-| Zero-downtime cutover needed | Incremental required |
+| Scenario                            | Migration Type           |
+| ----------------------------------- | ------------------------ |
+| Source is static during migration   | Full migration           |
+| Source changes during migration     | Incremental required     |
+| Zero-downtime cutover needed        | Incremental required     |
 | Ongoing replication (not migration) | Incremental (continuous) |
-| Large dataset, limited window | Incremental (multi-pass) |
+| Large dataset, limited window       | Incremental (multi-pass) |
 
 ---
 
 ### How Incremental Works
 
-```
+```text
 INITIAL LOAD
 ─────────────────────────────────────────────
 Source (T0)                    Target
@@ -36,9 +36,9 @@ Source (T1)                    Target
 │     F      │                │            │
 │  (G deleted)                │            │
 └────────────┘                └────────────┘
-       │                             
+       │
        │    CDC captures: UPDATE B, INSERT F, DELETE G
-       ↓                             
+       ↓
 ┌────────────┐
 │ A B' C D E │ ─── Changes ──→ Target updated
 │ F          │
@@ -51,14 +51,14 @@ Source (T1)                    Target
 
 Sensei captures changes via:
 
-| Database | CDC Method | Latency |
-|----------|-----------|---------|
-| PostgreSQL | Logical replication | Real-time |
-| MySQL/MariaDB | Binary log | Real-time |
-| Oracle | LogMiner / GoldenGate | Real-time |
-| SQL Server | Change Tracking / CDC | Real-time |
-| MongoDB | Change Streams | Real-time |
-| Generic | Timestamp/version column | Batch (minutes) |
+| Database      | CDC Method               | Latency         |
+| ------------- | ------------------------ | --------------- |
+| PostgreSQL    | Logical replication      | Real-time       |
+| MySQL/MariaDB | Binary log               | Real-time       |
+| Oracle        | LogMiner / GoldenGate    | Real-time       |
+| SQL Server    | Change Tracking / CDC    | Real-time       |
+| MongoDB       | Change Streams           | Real-time       |
+| Generic       | Timestamp/version column | Batch (minutes) |
 
 ---
 
@@ -67,29 +67,29 @@ Sensei captures changes via:
 ```yaml
 migration:
   type: incremental
-  
+
   initial_load:
     enabled: true
     # or: skip (if target already has baseline)
-  
+
   cdc:
-    method: auto  # Auto-detect best method
+    method: auto # Auto-detect best method
     # or: logical_replication, binlog, timestamp_column
-    
+
     # For timestamp-based CDC
     timestamp_column: updated_at
-    
+
     # Capture frequency
-    poll_interval: 30s  # For timestamp-based
-    
+    poll_interval: 30s # For timestamp-based
+
     # Conflict resolution
-    conflict_resolution: source_wins  # or target_wins, manual
-  
+    conflict_resolution: source_wins # or target_wins, manual
+
   continuous:
     enabled: true
     # Run until manually stopped
     # or: run until source/target in sync, then stop
-    stop_when: manual  # or in_sync
+    stop_when: manual # or in_sync
 ```
 
 ---
@@ -99,6 +99,7 @@ migration:
 For zero-downtime migrations:
 
 #### Phase 1: Initial Load
+
 Migrate all existing data while source continues operating.
 
 ```python
@@ -113,6 +114,7 @@ migration.start()
 ```
 
 #### Phase 2: Catch-Up
+
 Apply accumulated changes until target is nearly caught up.
 
 ```python
@@ -126,6 +128,7 @@ while migration.lag_seconds > 60:
 ```
 
 #### Phase 3: Cutover
+
 Brief source freeze, final sync, then switch.
 
 ```python
@@ -174,13 +177,14 @@ curl https://api.sensei.ai/v1/migrations/{id}/lag
 ```
 
 **Lag alerts:**
+
 ```yaml
 alerting:
   rules:
     - name: high_cdc_lag
       condition: lag_seconds > 300
       severity: high
-      message: "CDC lag exceeded 5 minutes"
+      message: 'CDC lag exceeded 5 minutes'
 ```
 
 ---
@@ -189,23 +193,23 @@ alerting:
 
 When the same record is modified in both source and target:
 
-| Strategy | Behavior |
-|----------|----------|
+| Strategy      | Behavior                        |
+| ------------- | ------------------------------- |
 | `source_wins` | Source change overwrites target |
-| `target_wins` | Target change preserved |
+| `target_wins` | Target change preserved         |
 | `newest_wins` | Compare timestamps, newest wins |
-| `manual` | Queue for human review |
-| `custom` | Apply custom merge logic |
+| `manual`      | Queue for human review          |
+| `custom`      | Apply custom merge logic        |
 
 ```yaml
 conflict_resolution:
   default: source_wins
-  
+
   # Per-table overrides
   overrides:
     - table: user_preferences
-      strategy: target_wins  # User changes on target preserved
-      
+      strategy: target_wins # User changes on target preserved
+
     - table: inventory
       strategy: newest_wins
       timestamp_column: last_updated
@@ -224,6 +228,7 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/stop?immediate=true
 ```
 
 **When to stop:**
+
 - Cutover complete, source decommissioned
 - Migration converted to full sync (different tool)
 - Testing/validation complete
@@ -232,14 +237,15 @@ curl -X POST https://api.sensei.ai/v1/migrations/{id}/stop?immediate=true
 
 ### Performance
 
-| Factor | Impact on CDC |
-|--------|--------------|
-| Change volume | More changes = more processing |
-| Network latency | Higher latency = higher lag |
-| Target write speed | Slow target = lag accumulation |
+| Factor                    | Impact on CDC                           |
+| ------------------------- | --------------------------------------- |
+| Change volume             | More changes = more processing          |
+| Network latency           | Higher latency = higher lag             |
+| Target write speed        | Slow target = lag accumulation          |
 | Transformation complexity | Complex transforms = slower application |
 
 **Typical throughput:**
+
 - Simple CDC: 10,000-50,000 changes/second
 - Complex transforms: 1,000-5,000 changes/second
 
