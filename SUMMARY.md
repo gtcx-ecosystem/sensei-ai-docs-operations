@@ -27,13 +27,13 @@
   - [Cutover Strategies](migrations/cutover-strategies.md)
   - [Rollback Procedures](migrations/rollback-procedures.md)
   - [Rollback Strategies](migrations/rollback.md)
-- [Post-Migration](migrations/post-migration.md)
-- [Runbooks](migrations/runbooks.md)
+- Completion
+  - [Post-Migration](migrations/post-migration.md)
+  - [Runbooks](migrations/runbooks.md)
 
 ## Deployment
 
 - [Overview](deployment/README.md)
-- [Infrastructure Requirements](deployment/infrastructure.md)
 - Deployment Models
   - [SaaS](deployment/saas.md)
   - [Hybrid](deployment/hybrid.md)
@@ -42,14 +42,17 @@
 - Container Platforms
   - [Kubernetes](deployment/kubernetes.md)
   - [Docker](deployment/docker.md)
-- [Network Configuration](deployment/network.md)
-- [High Availability](deployment/high-availability.md)
-- [Scaling](deployment/scaling.md)
-- [Security](deployment/security.md)
-- [Monitoring Setup](deployment/monitoring-setup.md)
-- [Configuration](deployment/configuration.md)
-- [Upgrades](deployment/upgrades.md)
-- [Backup and Recovery](deployment/backup-recovery.md)
+- Infrastructure
+  - [Requirements](deployment/infrastructure.md)
+  - [Network](deployment/network.md)
+  - [High Availability](deployment/high-availability.md)
+  - [Scaling](deployment/scaling.md)
+  - [Security](deployment/security.md)
+- Management
+  - [Configuration](deployment/configuration.md)
+  - [Monitoring](deployment/monitoring-setup.md)
+  - [Upgrades](deployment/upgrades.md)
+  - [Backup and Recovery](deployment/backup-recovery.md)
 
 ## Checklists
 
