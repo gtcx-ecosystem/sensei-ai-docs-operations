@@ -1,6 +1,6 @@
 # Error Handling
 
-## Error Classification, Recovery, and Escalation
+## Error Handling
 
 Sensei handles errors autonomously whenever possible. When human intervention is required, the system provides clear context and recommended actions.
 

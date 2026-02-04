@@ -1,6 +1,6 @@
 # Rollback Procedures
 
-## When Things Go Wrong: Recovering Gracefully
+## Rollback Procedures
 
 Even with Sensei's high success rates, situations arise where rollback is necessary. This guide covers rollback strategies for every migration phase.
 

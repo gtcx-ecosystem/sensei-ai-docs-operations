@@ -1,6 +1,6 @@
 # Air-Gapped Deployment
 
-## Running Sensei Without Internet Connectivity
+## Air-Gapped Deployment
 
 Air-gapped deployments are required for organizations with strict security requirements, classified environments, or regulatory constraints that prohibit internet connectivity. Sensei fully supports air-gapped operation with some architectural considerations.
 

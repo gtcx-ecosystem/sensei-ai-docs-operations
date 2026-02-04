@@ -1,6 +1,6 @@
 # High Availability
 
-## Redundancy, Failover, and Disaster Recovery
+## HA and Disaster Recovery
 
 Sensei is designed for high availability. This page covers HA architecture, failure scenarios, and disaster recovery planning.
 

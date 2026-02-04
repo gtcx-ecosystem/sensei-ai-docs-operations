@@ -1,6 +1,6 @@
 # Network Configuration
 
-## Firewall Rules, VPC Setup, and Connectivity
+## Network Configuration
 
 Proper network configuration ensures secure, reliable connectivity between Sensei components and your databases.
 

@@ -1,6 +1,6 @@
 # Hybrid Deployment
 
-## Data Plane in Your VPC, Control Plane in Sensei Cloud
+## Hybrid Architecture
 
 Hybrid deployment keeps your data within your network while leveraging Sensei's managed control plane for orchestration, updates, and the web interface.
 
