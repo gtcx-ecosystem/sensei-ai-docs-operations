@@ -4,11 +4,11 @@
 
 Every Sensei migration follows a predictable lifecycle. Understanding this lifecycle helps you plan operations, set expectations with stakeholders, and troubleshoot issues.
 
----
+***
 
 ### The Five Phases
 
-```text
+```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  Phase 1      Phase 2        Phase 3        Phase 4       Phase 5      │
 │  PLANNING     APPROVAL       EXECUTION      VALIDATION    CERTIFICATION│
@@ -24,7 +24,7 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
----
+***
 
 ### Phase 1: Planning
 
@@ -42,15 +42,15 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 **Outputs:**
 
-- Complete source schema documentation
-- Suggested mappings with confidence scores
-- Migration DAG (execution order)
-- Risk assessment
-- Time and resource estimates
+* Complete source schema documentation
+* Suggested mappings with confidence scores
+* Migration DAG (execution order)
+* Risk assessment
+* Time and resource estimates
 
 **User actions required:** None (automated). User may be notified of low-confidence mappings.
 
----
+***
 
 ### Phase 2: Approval
 
@@ -67,17 +67,17 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 **Outputs:**
 
-- Approved migration plan
-- Configuration settings locked
-- Audit trail of approvals
+* Approved migration plan
+* Configuration settings locked
+* Audit trail of approvals
 
 **User actions required:**
 
-- Review and approve mappings
-- Configure execution options
-- Grant final approval
+* Review and approve mappings
+* Configure execution options
+* Grant final approval
 
----
+***
 
 ### Phase 3: Execution
 
@@ -95,18 +95,18 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 **Outputs:**
 
-- Data migrated to target
-- Execution logs
-- Error log with recovery outcomes
-- Performance metrics
+* Data migrated to target
+* Execution logs
+* Error log with recovery outcomes
+* Performance metrics
 
 **User actions required:**
 
-- Monitor progress (optional — AMANI alerts on issues)
-- Resolve escalated errors
-- Approve continuation after major milestones (if configured)
+* Monitor progress (optional — AMANI alerts on issues)
+* Resolve escalated errors
+* Approve continuation after major milestones (if configured)
 
----
+***
 
 ### Phase 4: Validation
 
@@ -124,21 +124,21 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 **Outputs:**
 
-- Validation results (five perspectives)
-- Divergence reports (if any)
-- Behavioral Equivalence Certificate (if passed)
+* Validation results (five perspectives)
+* Divergence reports (if any)
+* Behavioral Equivalence Certificate (if passed)
 
 **User actions required:**
 
-- Review validation results
-- Investigate flagged divergences
-- Accept or reject certification
+* Review validation results
+* Investigate flagged divergences
+* Accept or reject certification
 
----
+***
 
 ### Phase 5: Certification
 
-**Duration:** ~30 minutes (mostly automated)
+**Duration:** \~30 minutes (mostly automated)
 
 **Activities:**
 
@@ -151,21 +151,21 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
 
 **Outputs:**
 
-- Behavioral Equivalence Certificate
-- Migration summary report
-- Archived logs and evidence
+* Behavioral Equivalence Certificate
+* Migration summary report
+* Archived logs and evidence
 
 **User actions required:**
 
-- Acknowledge completion
-- Distribute certificate to stakeholders
-- Initiate cutover (if not already done)
+* Acknowledge completion
+* Distribute certificate to stakeholders
+* Initiate cutover (if not already done)
 
----
+***
 
 ### State Diagram
 
-```text
+```
                     ┌──────────────┐
                     │   created    │
                     └──────┬───────┘
@@ -221,20 +221,12 @@ Every Sensei migration follows a predictable lifecycle. Understanding this lifec
                     └──────────────┘
 ```
 
----
+***
 
 ### Duration Estimates
 
-| Phase         | Small (<1M rows) | Medium (1-100M) | Large (>100M) |
-| ------------- | ---------------- | --------------- | ------------- |
-| Planning      | 30 min           | 1-2 hours       | 2-4 hours     |
-| Approval      | 1-4 hours        | 4-24 hours      | 24-72 hours   |
-| Execution     | 1-4 hours        | 4-24 hours      | 24-168 hours  |
-| Validation    | 1-2 hours        | 2-6 hours       | 6-24 hours    |
-| Certification | 15 min           | 30 min          | 1 hour        |
+<table><thead><tr><th width="147.48046875">Phase</th><th width="168.17578125">Small (&#x3C;1M rows)</th><th width="172.55078125">Medium (1-100M)</th><th>Large (>100M)</th></tr></thead><tbody><tr><td>Planning</td><td>30 min</td><td>1-2 hours</td><td>2-4 hours</td></tr><tr><td>Approval</td><td>1-4 hours</td><td>4-24 hours</td><td>24-72 hours</td></tr><tr><td>Execution</td><td>1-4 hours</td><td>4-24 hours</td><td>24-168 hours</td></tr><tr><td>Validation</td><td>1-2 hours</td><td>2-6 hours</td><td>6-24 hours</td></tr><tr><td>Certification</td><td>15 min</td><td>30 min</td><td>1 hour</td></tr></tbody></table>
 
 Total elapsed time varies significantly based on approval process duration and migration complexity.
 
-→ [Planning Phase](planning-phase.md)
-→ [Execution Phase](execution-phase.md)
-→ [Validation Phase](validation-phase.md)
+→ [Planning Phase](planning-phase.md) → [Execution Phase](execution-phase.md) → [Validation Phase](validation-phase.md)
